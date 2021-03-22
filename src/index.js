@@ -46,6 +46,40 @@ module.exports = {
 			return this.$crons.find((job) => job.hasOwnProperty("name") && job.name == name);
 		},
 
+		setJob(job) {
+			// this.$crons = this.schema.crons.map((job) => {
+			//	Prevent error on runOnInit that handle onTick at the end of the constructor
+			//	We handle it ourself
+			var cacheFunction = job.runOnInit;
+			job.runOnInit = undefined;
+			//	Just add the broker to handle actions and methods from other services
+			var instance_job = new cron.CronJob(
+				Object.assign(
+					job,
+					{
+						context: Object.assign(
+										this.broker,
+										{
+											getJob: this.getJob,
+											setJob: this.setJob
+										}
+								)
+					}
+				)
+			);
+			instance_job.runOnStarted = cacheFunction;
+			instance_job.manualStart = job.manualStart || false;
+			instance_job.name = job.name || this.makeid(20);
+					
+			this.$crons.push(instance_job);
+			
+			if (!job.manualStart) {
+				instance_job.start();
+			}
+			
+			return instance_job;
+		},
+
 		//	stolen on StackOverflow
 		makeid(size) {
 			var text = "";
@@ -87,7 +121,8 @@ module.exports = {
 							context: Object.assign(
 											this.broker,
 											{
-												getJob: this.getJob
+												getJob: this.getJob,
+												setJob: this.setJob
 											}
 									)
 						}
@@ -99,6 +134,7 @@ module.exports = {
 				
 				return instance_job;
 			});
+
 		}
 
 		return this.Promise.resolve();
