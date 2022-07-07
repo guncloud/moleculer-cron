@@ -1,6 +1,6 @@
 {
   "name": "@dbe/moleculer-cron",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "Mixin for Node-Cron",
   "main": "index.js",
   "scripts": {
