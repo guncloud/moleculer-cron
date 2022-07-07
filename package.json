@@ -1,10 +1,9 @@
 {
   "name": "@dbe/moleculer-cron",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Mixin for Node-Cron",
   "main": "index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "keywords": [
     "microservice",
     "moleculer",
